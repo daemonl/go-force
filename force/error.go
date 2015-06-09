@@ -1,9 +1,6 @@
 package force
 
-import (
-	"fmt"
-	"strings"
-)
+import "strings"
 
 // Custom Error to handle salesforce api responses.
 type ApiErrors []*ApiError
@@ -42,7 +39,24 @@ func (e ApiError) Error() string {
 }
 
 func (e ApiError) String() string {
-	return fmt.Sprintf("%#v", e)
+	parts := []string{}
+	if len(e.ErrorName) > 0 {
+		parts = append(parts, e.ErrorName)
+	}
+	if len(e.ErrorDescription) > 0 {
+		parts = append(parts, e.ErrorDescription)
+	}
+	if len(e.Message) > 0 {
+		parts = append(parts, e.Message)
+	}
+	if len(e.Fields) > 0 {
+		parts = append(parts, strings.Join(e.Fields, ", "))
+	}
+
+	if len(e.ErrorCode) > 0 {
+		return e.ErrorCode + ": " + strings.Join(parts, " ")
+	}
+	return strings.Join(parts, " ")
 }
 
 func (e ApiError) Validate() bool {
