@@ -98,6 +98,9 @@ func (forceApi *ForceApi) request(method, path string, params url.Values, payloa
 	if err != nil {
 		return fmt.Errorf("Error reading response bytes: %v", err)
 	}
+	if len(respBytes) < 1 && resp.StatusCode == http.StatusOK {
+		return nil
+	}
 	forceApi.traceResponseBody(respBytes)
 
 	// Attempt to parse response into out
