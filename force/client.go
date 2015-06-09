@@ -91,15 +91,15 @@ func (forceApi *ForceApi) request(method, path string, params url.Values, payloa
 	if err != nil {
 		return fmt.Errorf("Error sending %v request: %v", method, err)
 	}
+	if resp.StatusCode == http.StatusNoContent {
+		return nil
+	}
 	defer resp.Body.Close()
 	forceApi.traceResponse(resp)
 
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("Error reading response bytes: %v", err)
-	}
-	if len(respBytes) < 1 && resp.StatusCode == http.StatusOK {
-		return nil
 	}
 	forceApi.traceResponseBody(respBytes)
 
